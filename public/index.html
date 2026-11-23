@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Turn your study notes into revision quizzes and a daily review plan.">
+  <meta name="theme-color" content="#f7f6f2">
+  <link rel="stylesheet" href="/style.css">
+  <title>QuizForge — Your personal study studio</title>
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <a class="brand" href="#notes"><span class="brand-icon" aria-hidden="true">Q</span> QuizForge</a>
+      <nav aria-label="Study workspace">
+        <a href="#notes">Notes</a><a href="#quiz">Quiz</a><a href="#review">Review<span id="nav-due" class="nav-count" hidden></span></a><a href="#progress">Progress</a>
+      </nav>
+      <span class="local-status"><i></i> Local workspace</span>
+    </div>
+  </header>
+  <main id="workspace" class="shell">
+    <section id="notes" class="view">
+      <div class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow"><span></span> YOUR PERSONAL STUDY STUDIO</p>
+          <h1>Turn notes into<br><em>knowledge.</em></h1>
+          <p>Build a quiz from your own notes, then revisit the tricky bits on a schedule that adapts to you.</p>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+          <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
+          <div class="art-card art-back"></div><div class="art-card art-front"><b>?</b><i></i><i></i></div>
+          <span class="spark spark-one">✦</span><span class="spark spark-two">✧</span>
+        </div>
+      </div>
+      <div class="notes-grid">
+        <form id="notes-form" class="panel notes-panel">
+          <div class="panel-header">
+            <div><p class="eyebrow"><span class="step">01</span> INPUT</p><h2><label for="note-text">Your study notes</label></h2></div>
+            <label class="button secondary upload" for="upload-file">↑ Upload file</label>
+            <input class="sr-only" type="file" id="upload-file" accept=".txt,.md,.markdown,text/plain,text/markdown">
+          </div>
+          <p class="muted">Paste plain text or Markdown. Headings become topics in your progress view.</p>
+          <textarea id="note-text" maxlength="50000" placeholder="# Topic&#10;Paste a few sentences or bullet points here…"></textarea>
+          <div class="form-bottom"><small id="char-count">0 characters</small><button class="button primary" type="submit">Generate quiz <span aria-hidden="true">→</span></button></div>
+          <p class="status" id="editor-status" role="status" hidden></p>
+        </form>
+        <aside class="panel samples-panel">
+          <p class="eyebrow"><span class="step">02</span> QUICK START</p>
+          <h2>Try an example</h2>
+          <p class="muted">Load a ready-to-quiz set of notes.</p>
+          <button type="button" class="sample" data-sample="photosynthesis"><span class="sample-icon green" aria-hidden="true">✿</span><span><strong>Photosynthesis</strong><small>Biology</small></span><span class="arrow" aria-hidden="true">↗</span></button>
+          <button type="button" class="sample" data-sample="french-revolution"><span class="sample-icon purple" aria-hidden="true">◈</span><span><strong>The French Revolution</strong><small>History</small></span><span class="arrow" aria-hidden="true">↗</span></button>
+          <button type="button" class="sample" data-sample="number-systems"><span class="sample-icon yellow" aria-hidden="true">#</span><span><strong>Number Systems</strong><small>Computer science</small></span><span class="arrow" aria-hidden="true">↗</span></button>
+          <p class="privacy"><span aria-hidden="true">◉</span> Your notes stay in this browser. No account, key, or cloud service needed.</p>
+        </aside>
+      </div>
+    </section>
+    <section id="quiz" class="view" hidden>
+      <header class="view-header"><p class="eyebrow"><span></span> PRACTICE</p><h1>Revision quiz</h1><p>Test your recall, then check your answer against the notes.</p></header>
+      <div id="quiz-body" class="panel content-panel"></div>
+    </section>
+    <section id="review" class="view" hidden>
+      <header class="view-header"><p class="eyebrow"><span></span> SPACED REPETITION</p><h1>Daily review</h1><p>Reveal each answer and rate how well you remembered it.</p></header>
+      <div id="review-body" class="panel content-panel"></div>
+    </section>
+    <section id="progress" class="view" hidden>
+      <header class="view-header"><p class="eyebrow"><span></span> STUDY TRACKER</p><h1>Your progress</h1><p>See what’s due and how your recall is improving by topic.</p></header>
+      <div id="progress-body"></div>
+    </section>
+    <p id="storage-warning" class="status" role="status" hidden>This browser couldn’t save your work. It will stay available until you close or reload this page.</p>
+  </main>
+  <footer class="shell">QuizForge <span>·</span> Built for the way you learn.</footer>
+</body>
+</html>

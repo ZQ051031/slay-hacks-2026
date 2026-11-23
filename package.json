@@ -1,0 +1,12 @@
+{
+  "name": "quizforge",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test",
+    "build": "node --check server.js && node --check public/app.js && node --check lib/quiz.js && node --check lib/scheduler.js && node --check lib/storage.js"
+  },
+  "engines": { "node": ">=22" }
+}
