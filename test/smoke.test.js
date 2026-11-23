@@ -74,7 +74,7 @@ async function openChrome(t, origin) {
     });
   }
   async function evaluate(expression) {
-    const result = await command('Runtime.evaluate', { expression, returnByValue: true });
+    const result = await command('Runtime.evaluate', { expression, returnByValue: true, awaitPromise: true });
     if (result.exceptionDetails) throw new Error(result.exceptionDetails.exception?.description ?? result.exceptionDetails.text);
     return result.result.value;
   }
@@ -104,6 +104,7 @@ test('Chrome renders all views and persists a complete study flow', { timeout: 2
   const click = selector => evaluate(`document.querySelector(${JSON.stringify(selector)}).click()`);
   const visible = selector => evaluate(`Boolean(document.querySelector(${JSON.stringify(selector)})?.getClientRects().length)`);
   await eventually(async function notesVisible() { return visible('#notes .hero'); });
+  await eventually(async function workspaceReady() { return visible('nav a[href="#notes"][aria-current="page"]'); });
   assert.match(await evaluate('getComputedStyle(document.querySelector(".hero")).backgroundColor'), /234, 228, 252/);
   await click('[data-sample="photosynthesis"]');
   await eventually(async function sampleLoaded() { return evaluate('document.querySelector("#note-text").value.includes("Chlorophyll")'); });
@@ -153,4 +154,21 @@ test('Chrome renders all views and persists a complete study flow', { timeout: 2
   assert.match(await evaluate('document.querySelector("#note-text").value'), /Chlorophyll/);
   await command('Emulation.setDeviceMetricsOverride', { width: 375, height: 812, deviceScaleFactor: 1, mobile: true });
   assert.equal(await evaluate('document.documentElement.scrollWidth === innerWidth'), true);
+
+  const pasted = '# Geology\n- **Obsidian** forms when lava cools quickly.\n- **Granite** is an igneous rock.\n- **Basalt** contains plagioclase.';
+  await command('Browser.grantPermissions', { origin, permissions: ['clipboardReadWrite', 'clipboardSanitizedWrite'] });
+  await command('Page.bringToFront');
+  await command('Emulation.setFocusEmulationEnabled', { enabled: true });
+  await evaluate('document.querySelector("#note-text").select()');
+  await evaluate(`navigator.clipboard.writeText(${JSON.stringify(pasted)})`);
+  const shortcut = { key: 'v', code: 'KeyV', modifiers: 2, windowsVirtualKeyCode: 86 };
+  await command('Input.dispatchKeyEvent', { type: 'keyDown', ...shortcut });
+  await command('Input.dispatchKeyEvent', { type: 'keyUp', ...shortcut });
+  await eventually(async function notesPasted() { return evaluate(`document.querySelector('#note-text').value === ${JSON.stringify(pasted)}`); });
+  await click('#notes-form button[type=submit]');
+  await eventually(async function pastedQuizVisible() { return visible('#quiz .choice'); });
+  assert.match(await evaluate('document.querySelector("#quiz .question-topic").textContent'), /^Geology$/);
+  assert.match(await evaluate('document.querySelector("#quiz .prompt").textContent'), /\[blank\] forms when lava cools quickly\./);
+  await evaluate('[...document.querySelectorAll("#quiz .choice")].find(option => option.textContent === "Obsidian").click()');
+  assert.match(await evaluate('document.querySelector("#quiz .feedback").textContent'), /Correct!.*Obsidian forms when lava cools quickly\./);
 });

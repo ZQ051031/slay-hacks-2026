@@ -19,19 +19,19 @@ Open **http://127.0.0.1:3000**. The Node server serves static assets only; no no
 ## Try the demo
 
 1. In **Notes**, paste text, upload a `.txt`, `.md`, or `.markdown` file, or pick **Photosynthesis**, **The French Revolution**, or **Number Systems**. Markdown headings become topics.
-2. Click **Generate quiz**. Answer multiple-choice, true/false, and short-answer prompts. After each answer, check the quoted source and continue to see your final score.
+2. Click **Generate quiz**. Answer multiple-choice, true/false, and short-answer prompts. After each answer, check the source excerpt and continue to see your final score.
 3. Open **Review**. Generated cards are initially due today. Reveal an answer and choose **Again**, **Hard**, **Good**, or **Easy** to move the card to its next due date. Once you rate a card, the app shows that date and advances to the next due card.
 4. Open **Progress** to see your review streak, cards due today (including overdue cards), and topic mastery. Notes, cards, and review dates stay in this browser’s localStorage. Refreshing keeps them; clearing site data removes them. The current quiz attempt is not stored.
 
 ### How the AI works
 
-QuizForge uses an offline, rule-based text engine rather than a language model. It splits notes on lines and sentence boundaries, assigns passages to headings, and looks for bold or inline-code key terms, definition subjects, and then distinctive longer words. It blanks out a term in the original excerpt and rotates through these formats:
+QuizForge uses an offline, rule-based text engine rather than a language model. It removes Markdown formatting, keeping link labels and using emphasis or inline code as key-term hints. It splits the cleaned text into sentences, assigns passages to headings, then looks for marked terms, definition subjects, and distinctive longer words. It blanks out a term in the cleaned excerpt and rotates through these formats:
 
 - **Multiple choice:** The blank has one source answer and up to three distinct distractors drawn from elsewhere in the notes. If there is no usable distractor, the engine can use short answer instead.
 - **True/false:** The prompt checks whether a proposed term fills the blank in that exact excerpt. A distractor is not presented as a real-world fact.
 - **Short answer:** A typed answer is checked against the original term, ignoring case, repeated whitespace, and trailing sentence punctuation.
 
-Every explanation quotes the supporting excerpt. The engine does not look up facts or validate the accuracy of the notes. It works best with short, complete sentences or definitions, and may produce fewer formats or cards for very short or unstructured notes. It generates at most 12 questions per quiz.
+Every explanation quotes the supporting excerpt without Markdown formatting. The engine does not look up facts or validate the accuracy of the notes. It works best with short, complete sentences or definitions, and may produce fewer formats or cards for very short or unstructured notes. It generates at most 12 questions per quiz.
 
 ### How scheduling works
 
