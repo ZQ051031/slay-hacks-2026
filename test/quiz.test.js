@@ -96,3 +96,21 @@ test('cleans lists, headings, emphasis, code and link destinations before ground
   assert.equal(generated[0].answer, 'Granite');
   assert.match(generated[1].explanation, /missing text is “Basalt”/);
 });
+
+test('does not offer distractors that complete a blank with another sentence from the notes', () => {
+  const input = [
+    '# Granite notes',
+    '**Granite** is an igneous rock.',
+    '**Marble** forms from limestone.',
+    '# Basalt notes',
+    '**Slate** often splits into thin sheets.',
+    '**Basalt** is an  igneous rock.',
+  ].join('\n');
+  const choices = generateQuiz(input, { random: () => 0.4 }).filter(question => question.type === 'multiple-choice');
+  assert.deepEqual(choices.map(question => question.answer), ['Granite', 'Basalt']);
+  assert.ok(!choices[0].options.includes('Basalt'));
+  assert.ok(!choices[1].options.includes('Granite'));
+  const [shortAlternate] = generateQuiz('**Elephant** is up.\nOx is up.\n**Ox** grazes in the pasture.');
+  assert.equal(shortAlternate.type, 'multiple-choice');
+  assert.ok(!shortAlternate.options.includes('Ox'));
+});
