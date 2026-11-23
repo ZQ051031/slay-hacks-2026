@@ -125,3 +125,33 @@ test('blanks a whole term rather than a substring of a word, including Unicode w
     assert.equal(question.prompt.split('\n')[1], expected);
   }
 });
+
+test('ignores backtick and tilde fences, their info strings and all enclosed text', () => {
+  const input = [
+    '# Geology',
+    '**Granite** is an igneous rock.',
+    '````text fence metadata',
+    '# Ignored heading',
+    'Spurious sentence inside a backtick fence.',
+    '```',
+    'Premature short fence must not close.',
+    '~~~~',
+    'A tilde fence must not close a backtick fence.',
+    '````',
+    '~~~text fence metadata',
+    'Spurious sentence inside a tilde fence.',
+    '~~~~',
+    '**Slate** often splits into thin sheets.',
+    '```',
+    'An unclosed fence hides the remaining content.',
+  ].join('\n');
+  const generated = generateQuiz(input, { random: () => 0.4 });
+  assert.deepEqual(new Set(generated.map(question => question.source)), new Set([
+    'Granite is an igneous rock.',
+    'Slate often splits into thin sheets.',
+  ]));
+  for (const { topic, options } of generated) {
+    assert.equal(topic, 'Geology');
+    assert.ok(options.every(option => /^(?:granite|igneous|rock|slate|often|splits|into|thin|sheets|true|false)$/iu.test(option)));
+  }
+});
