@@ -114,3 +114,14 @@ test('does not offer distractors that complete a blank with another sentence fro
   assert.equal(shortAlternate.type, 'multiple-choice');
   assert.ok(!shortAlternate.options.includes('Ox'));
 });
+
+test('blanks a whole term rather than a substring of a word, including Unicode words', () => {
+  for (const [notes, expected, answer] of [
+    ['The catalog lists each **cat** by name.', 'The catalog lists each [blank] by name.', 'cat'],
+    ['A préÉlan label is different from **Élan**.', 'A préÉlan label is different from [blank].', 'Élan'],
+  ]) {
+    const [question] = generateQuiz(notes);
+    assert.equal(question.answer, answer);
+    assert.equal(question.prompt.split('\n')[1], expected);
+  }
+});
